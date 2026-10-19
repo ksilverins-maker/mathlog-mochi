@@ -279,10 +279,7 @@ label.field input:focus { border-color: var(--berry); outline: none; }
     <div class="done-mark">예약 완료!</div>
     <div class="panel"><dl class="summary" id="doneSummary"></dl></div>
     <p class="hint" style="text-align:center">시간에 맞춰 부스로 와 주세요!</p>
-    <div class="row-actions">
-      <button class="btn btn-ghost" type="button" data-go="home">처음으로</button>
-      <button class="btn btn-primary" type="button" id="againBtn">다음 손님 예약</button>
-    </div>
+    <button class="btn btn-primary" type="button" data-go="home">처음으로</button>
   </div>
 
 </section>
@@ -375,7 +372,6 @@ $("#goInfo").onclick = () => show("info");
 $("#goBook").onclick = () => { if (book.step === 5) resetBook(); show("book"); };
 $("#goAdmin").onclick = () => show("admin");
 $("#bookBack").onclick = () => show("home");
-$("#againBtn").onclick = () => { resetBook(); renderBook(); window.scrollTo(0, 0); };
 function resetBook() {
   $("#infoErr").textContent = ""; $("#submitErr").textContent = ""; $("#doneSummary").innerHTML = ""; Object.assign(book, { step: 1, people: 0, slot: "", name: "", phone: "" }); $("#nameInput").value = ""; $("#phoneInput").value = ""; }
 
