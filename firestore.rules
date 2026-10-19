@@ -1,0 +1,67 @@
+rules_version = '2';
+
+// 매쓰로그 과일 모찌 예약 — Firestore 보안 규칙
+// - 누구나 타임별 인원(slots)은 볼 수 있어요.
+// - 누구나 예약(bookings)을 만들 수 있지만, 같은 요청에서 그 타임 인원을 정확히 올려야 하고 8명을 넘을 수 없어요.
+// - 예약자 이름과 번호는 아래 관리자 이메일로 구글 로그인한 사람만 읽고 취소할 수 있어요.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ▼ 관리자 구글 계정 이메일을 여기에 적어 주세요 (여러 명이면 쉼표로)
+    function isAdmin() {
+      return request.auth != null
+        && (request.auth.token.email_verified == true
+            || request.auth.token.firebase.sign_in_provider == 'password')
+        && request.auth.token.email in [
+          'ksilverins@gmail.com'
+        ];
+    }
+
+    function validSlot(s) {
+      return s in ['1300','1310','1320','1330','1340','1350','1400','1410',
+                   '1450','1500','1510','1520','1530','1540','1550','1600',
+                   '1640','1650','1700','1710','1720','1730','1740','1750'];
+    }
+    function slotPath(s) { return /databases/$(database)/documents/slots/$(s); }
+    function bookingPath(b) { return /databases/$(database)/documents/bookings/$(b); }
+    function countBefore(s) { return exists(slotPath(s)) ? get(slotPath(s)).data.count : 0; }
+
+    match /slots/{sid} {
+      allow read: if true;
+      allow create, update: if isAdmin() || (
+        validSlot(sid)
+        && request.resource.data.keys().hasOnly(['count', 'lastBooking'])
+        && request.resource.data.count is int
+        && request.resource.data.count <= 8
+        && request.resource.data.lastBooking is string
+        && !exists(bookingPath(request.resource.data.lastBooking))
+        && existsAfter(bookingPath(request.resource.data.lastBooking))
+        && getAfter(bookingPath(request.resource.data.lastBooking)).data.slot == sid
+        && request.resource.data.count == countBefore(sid)
+             + getAfter(bookingPath(request.resource.data.lastBooking)).data.people
+      );
+      allow delete: if isAdmin();
+    }
+
+    match /bookings/{bid} {
+      allow read, update, delete: if isAdmin();
+      allow create: if
+        request.resource.data.keys().hasOnly(['slot', 'people', 'name', 'phone', 'code', 'createdAt'])
+        && validSlot(request.resource.data.slot)
+        && request.resource.data.people is int
+        && request.resource.data.people >= 1
+        && request.resource.data.people <= 8
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 1
+        && request.resource.data.name.size() <= 20
+        && request.resource.data.phone is string
+        && request.resource.data.phone.matches('^01[016789]-[0-9]{3,4}-[0-9]{4}$')
+        && request.resource.data.code is string
+        && request.resource.data.code.size() <= 20
+        && request.resource.data.createdAt == request.time
+        && getAfter(slotPath(request.resource.data.slot)).data.lastBooking == bid
+        && getAfter(slotPath(request.resource.data.slot)).data.count
+             == countBefore(request.resource.data.slot) + request.resource.data.people;
+    }
+  }
+}
