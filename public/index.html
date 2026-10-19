@@ -5,35 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>매쓰로그 과일 모찌</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Jua&family=Gowun+Dodum&display=swap">
 <style>
 /* Layout: one-screen phone app. Home is a vertical stack (small top line, medium line, big centre title, buttons at bottom); inner pages are a single 520px column. */
 :root {
-  --bg: #fbf3f2;
+  /* Poster palette: cream paper, tomato-red lettering, fruit accents. Light only, to match the printed poster. */
+  --bg: #fdf5ea;
+  --bg-floor: #f7ead8;
   --surface: #ffffff;
-  --ink: #3a262c;
-  --muted: #86686f;
-  --line: #efdadd;
-  --berry: #d9445f;
-  --berry-soft: #fbe1e6;
-  --leaf: #4f8a4d;
-  --leaf-soft: #e3f0df;
-  --warn: #b25d12;
+  --ink: #3b2620;
+  --muted: #8b6f62;
+  --line: #f0dcc6;
+  --berry: #e2332a;
+  --berry-soft: #fde4dc;
+  --leaf: #4f9a3c;
+  --leaf-soft: #e8f3dc;
+  --warn: #c2410c;
   --on-berry: #ffffff;
+  --straw: #e2332a; --tang: #f39a1f; --grape: #a6cf55; --blue: #4a52b5;
+  --font-title: "Black Han Sans", "Jua", "Malgun Gothic", sans-serif;
   --font-display: "Jua", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   --font-body: "Gowun Dodum", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #1c1416; --surface: #281d20; --ink: #f6e8eb; --muted: #bc9fa6; --line: #3e2d32;
-    --berry: #f07891; --berry-soft: #43242c; --leaf: #8cc489; --leaf-soft: #22321f; --warn: #f0a560; --on-berry: #2a0d14;
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #1c1416; --surface: #281d20; --ink: #f6e8eb; --muted: #bc9fa6; --line: #3e2d32;
-  --berry: #f07891; --berry-soft: #43242c; --leaf: #8cc489; --leaf-soft: #22321f; --warn: #f0a560; --on-berry: #2a0d14;
-  color-scheme: dark;
+  color-scheme: light;
 }
 [hidden] { display: none !important; }
 html, body { height: 100%; }
@@ -57,12 +50,12 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 400; text-wrap: bala
   padding-right: max(16px, env(safe-area-inset-right, 0px));
   position: relative; overflow: hidden;
 }
-.club { font-size: 0.9rem; letter-spacing: 0.04em; color: var(--muted); margin-bottom: 10vh; position: relative; z-index: 1; }
+.club { font-family: var(--font-display); font-size: 1rem; letter-spacing: 0.02em; color: var(--berry); margin-bottom: 10vh; position: relative; z-index: 1; }
 .home-mid { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; position: relative; z-index: 1; }
-.tagline { font-family: var(--font-display); font-size: clamp(1.25rem, 5vw, 1.6rem); color: var(--muted); }
-.title { font-family: var(--font-display); font-size: clamp(3.6rem, 18vw, 6rem); color: var(--berry); line-height: 1.05; }
+.tagline { font-family: var(--font-display); font-size: clamp(1.35rem, 5.5vw, 1.9rem); color: var(--berry); }
+.title { font-family: var(--font-title); font-size: clamp(4.4rem, 24vw, 8.5rem); color: var(--berry); line-height: 1; letter-spacing: -0.02em; }
 .mochi-row { display: flex; gap: 14px; margin-top: 2px; }
-.mochi { width: 50px; height: 41px; border-radius: 50% 50% 46% 46% / 62% 62% 38% 38%; background: var(--surface); border: 2px solid var(--line); position: relative; }
+.mochi { width: 50px; height: 41px; border-radius: 50% 50% 46% 46% / 62% 62% 38% 38%; background: var(--surface); border: 2px solid #ecdcd0; box-shadow: inset 0 -4px 0 #f3e9e1; position: relative; }
 .mochi::after { content: ""; position: absolute; left: 50%; top: 28%; width: 17px; height: 17px; margin-left: -8.5px; border-radius: 50%; background: var(--fruit); }
 .home-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 420px; margin-top: 14vh; position: relative; z-index: 1; }
 /* Background: mochi bouncing on the floor behind the people/time steps of booking (positions driven by the script at the end). */
@@ -71,11 +64,21 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 400; text-wrap: bala
 .bm { position: absolute; left: 0; top: 0; transform-origin: 50% 100%; will-change: transform; opacity: 0.75; }
 .bm .mochi { display: block; width: var(--w); height: calc(var(--w) * 0.82); border-width: 2px; box-shadow: 0 6px 14px rgba(120, 60, 70, 0.10); }
 .bm .mochi::after { width: calc(var(--w) * 0.34); height: calc(var(--w) * 0.34); margin-left: calc(var(--w) * -0.17); }
+#home::before { content: ""; position: absolute; left: -20%; right: -20%; bottom: 0; height: 40%; background: var(--bg-floor); border-radius: 50% 50% 0 0 / 22% 22% 0 0; z-index: 0; }
+.deco { position: absolute; pointer-events: none; z-index: 0; }
+.deco-straw { top: 14px; right: -8px; width: clamp(64px, 16vw, 110px); transform: rotate(18deg); }
+.deco-straw2 { left: -10px; top: 46%; width: clamp(44px, 11vw, 72px); transform: rotate(-22deg); }
+.deco-tang { left: 3%; bottom: 3%; width: clamp(48px, 12vw, 96px); }
+.deco-grape { right: 4%; bottom: 3%; width: clamp(46px, 11vw, 90px); }
+.sticker { position: relative; width: 132px; height: 132px; margin-top: 14px; display: grid; place-items: center; text-align: center; font-family: var(--font-display); color: var(--berry); line-height: 1.25; transform: rotate(-6deg); }
+.sticker svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.sticker span { position: relative; font-size: 1.15rem; }
+.sticker b { font-weight: 400; font-size: 1.3rem; display: block; }
 .home-admin { position: absolute; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%); font-size: 0.8rem; color: var(--muted); background: none; border: 0; text-decoration: underline; text-underline-offset: 3px; z-index: 1; }
 
-.btn { border: 0; border-radius: 16px; padding: 15px 18px; font-family: var(--font-display); font-size: 1.15rem; }
-.btn-primary { background: var(--berry); color: var(--on-berry); }
-.btn-ghost { background: var(--surface); border: 2px solid var(--line); }
+.btn { border: 0; border-radius: 999px; padding: 15px 18px; font-family: var(--font-display); font-size: 1.2rem; }
+.btn-primary { background: var(--berry); color: var(--on-berry); box-shadow: 0 4px 0 #b52119; }
+.btn-ghost { background: var(--surface); border: 2px solid var(--berry); color: var(--berry); }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
 /* ---------- Inner pages ---------- */
@@ -90,9 +93,9 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 400; text-wrap: bala
 .back { background: none; border: 0; padding: 8px 10px 8px 0; font-size: 1rem; color: var(--muted); }
 .topbar h2 { font-size: 1.5rem; }
 .section { display: flex; flex-direction: column; gap: 12px; }
-.section h3 { font-size: 1.15rem; }
+.section h3 { font-size: 1.25rem; color: var(--berry); }
 .hint { color: var(--muted); font-size: 0.9rem; margin: 0; }
-.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 16px; }
+.panel { background: var(--surface); border: 2px solid var(--line); border-radius: 22px; padding: 16px; }
 .placeholder { background: var(--berry-soft); color: var(--berry); border-radius: 6px; padding: 0 6px; font-size: 0.85em; white-space: nowrap; }
 
 /* Booth info */
@@ -110,22 +113,21 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 400; text-wrap: bala
 .steps { display: flex; gap: 6px; }
 .steps span { flex: 1; height: 5px; border-radius: 3px; background: var(--line); }
 .steps span.on { background: var(--berry); }
-.people { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-.people button { aspect-ratio: 1; max-width: 100%; border-radius: 16px; border: 2px solid var(--line); background: var(--surface); font-family: var(--font-display); font-size: 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; }
-.people button small { font-family: var(--font-body); font-size: 0.75rem; color: var(--muted); }
-.people button.sel { border-color: var(--berry); background: var(--berry-soft); color: var(--berry); }
+.people { display: flex; flex-wrap: wrap; gap: 10px; }
+.people button { width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--line); background: var(--surface); font-family: var(--font-display); font-size: 1.35rem; display: grid; place-items: center; line-height: 1; padding: 0; }
+.people button.sel { border-color: var(--berry); background: var(--berry); color: var(--on-berry); }
 .people button:disabled { opacity: 0.35; cursor: not-allowed; }
 
 .session-label { font-family: var(--font-display); font-size: 1rem; color: var(--muted); display: flex; justify-content: space-between; }
 .slots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-.slot { border: 2px solid var(--line); background: var(--surface); border-radius: 14px; padding: 8px 4px 9px; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
+.slot { border: 2px solid var(--line); background: var(--surface); border-radius: 16px; padding: 8px 4px 9px; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
 .slot b { font-family: var(--font-display); font-weight: 400; font-size: 1.1rem; }
 .dots { display: grid; grid-template-columns: repeat(4, 7px); gap: 3px; }
 .dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--line); }
 .dots i.f { background: var(--berry); }
 .slot .cnt { font-size: 0.72rem; color: var(--muted); }
 .slot.full .cnt { color: var(--warn); }
-.slot.sel { border-color: var(--berry); background: var(--berry-soft); }
+.slot.sel { border-color: var(--berry); background: var(--berry-soft); color: var(--berry); }
 .slot:disabled { opacity: 0.4; cursor: not-allowed; }
 .slot.view { cursor: default; }
 
@@ -169,16 +171,21 @@ label.field input:focus { border-color: var(--berry); outline: none; }
 <div class="bg-mochi" id="bgMochi" aria-hidden="true" hidden></div>
 
 <section id="home" data-view="home">
-  <div class="club">성신여고 수학 동아리 매쓰로그</div>
+  <div class="deco deco-straw" aria-hidden="true"><svg viewBox="0 0 100 110"><path d="M50 22c-30 0-44 18-40 40 4 24 26 44 40 46 14-2 36-22 40-46 4-22-10-40-40-40z" fill="#e2332a"/><path d="M50 26c-10-12-26-14-36-8 10 2 18 6 22 12-10-2-20 0-26 6 12 0 20 2 26 6 4 2 10 0 14-2 4 2 10 4 14 2 6-4 14-6 26-6-6-6-16-8-26-6 4-6 12-10 22-12-10-6-26-4-36 8z" fill="#4f9a3c"/><g fill="#ffd65a"><ellipse cx="30" cy="50" rx="2" ry="3"/><ellipse cx="50" cy="46" rx="2" ry="3"/><ellipse cx="70" cy="50" rx="2" ry="3"/><ellipse cx="24" cy="68" rx="2" ry="3"/><ellipse cx="42" cy="64" rx="2" ry="3"/><ellipse cx="60" cy="64" rx="2" ry="3"/><ellipse cx="78" cy="68" rx="2" ry="3"/><ellipse cx="34" cy="82" rx="2" ry="3"/><ellipse cx="52" cy="80" rx="2" ry="3"/><ellipse cx="68" cy="84" rx="2" ry="3"/><ellipse cx="46" cy="96" rx="2" ry="3"/><ellipse cx="58" cy="96" rx="2" ry="3"/></g></svg></div>
+  <div class="deco deco-straw2" aria-hidden="true"><svg viewBox="0 0 100 110"><path d="M50 22c-30 0-44 18-40 40 4 24 26 44 40 46 14-2 36-22 40-46 4-22-10-40-40-40z" fill="#e2332a"/><path d="M50 26c-10-12-26-14-36-8 10 2 18 6 22 12-10-2-20 0-26 6 12 0 20 2 26 6 4 2 10 0 14-2 4 2 10 4 14 2 6-4 14-6 26-6-6-6-16-8-26-6 4-6 12-10 22-12-10-6-26-4-36 8z" fill="#4f9a3c"/><g fill="#ffd65a"><ellipse cx="30" cy="50" rx="2" ry="3"/><ellipse cx="50" cy="46" rx="2" ry="3"/><ellipse cx="70" cy="50" rx="2" ry="3"/><ellipse cx="24" cy="68" rx="2" ry="3"/><ellipse cx="42" cy="64" rx="2" ry="3"/><ellipse cx="60" cy="64" rx="2" ry="3"/><ellipse cx="78" cy="68" rx="2" ry="3"/><ellipse cx="34" cy="82" rx="2" ry="3"/><ellipse cx="52" cy="80" rx="2" ry="3"/><ellipse cx="68" cy="84" rx="2" ry="3"/><ellipse cx="46" cy="96" rx="2" ry="3"/><ellipse cx="58" cy="96" rx="2" ry="3"/></g></svg></div>
+  <div class="deco deco-tang" aria-hidden="true"><svg viewBox="0 0 100 100"><circle cx="50" cy="54" r="42" fill="#f39a1f"/><circle cx="36" cy="40" r="9" fill="#ffc062" opacity=".7"/><path d="M50 14c2-6 8-10 16-10-2 8-8 12-16 10z" fill="#4f9a3c"/><path d="M50 12v8" stroke="#6b4a2a" stroke-width="3" stroke-linecap="round"/></svg></div>
+  <div class="deco deco-grape" aria-hidden="true"><svg viewBox="0 0 100 110"><path d="M52 18c4-8 10-12 18-12" stroke="#6b8a2a" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M56 16c10-8 26-6 32 4-12 2-22 0-32-4z" fill="#4f9a3c"/><g fill="#a6cf55" stroke="#86b33c" stroke-width="2"><circle cx="30" cy="32" r="13"/><circle cx="56" cy="30" r="13"/><circle cx="80" cy="34" r="13"/><circle cx="42" cy="54" r="13"/><circle cx="68" cy="54" r="13"/><circle cx="54" cy="76" r="13"/><circle cx="30" cy="74" r="13"/></g></svg></div>
+  <div class="club">@성신여고 수학 동아리 매쓰로그</div>
   <div class="home-mid">
-    <div class="tagline">다양한 앙금으로 즐기는</div>
-    <h1 class="title">과일 모찌</h1>
+    <div class="tagline">팥, 요거트, 초코 앙금과</div>
+    <h1 class="title">과일모찌</h1>
     <div class="mochi-row" aria-hidden="true">
-      <span class="mochi" style="--fruit:#e2445f"></span>
-      <span class="mochi" style="--fruit:#f4a63a"></span>
-      <span class="mochi" style="--fruit:#7cba4f"></span>
-      <span class="mochi" style="--fruit:#8a5bc4"></span>
+      <span class="mochi" style="--fruit:var(--straw)"></span>
+      <span class="mochi" style="--fruit:var(--tang)"></span>
+      <span class="mochi" style="--fruit:var(--grape)"></span>
+      <span class="mochi" style="--fruit:var(--blue)"></span>
     </div>
+    <div class="sticker"><svg viewBox="0 0 120 120" aria-hidden="true"><path d="M110.0,60.0 103.9,70.0 105.0,81.7 95.2,88.1 91.2,99.1 79.5,100.5 71.1,108.7 60.0,105.0 48.9,108.7 40.5,100.5 28.8,99.1 24.8,88.1 15.0,81.7 16.1,70.0 10.0,60.0 16.1,50.0 15.0,38.3 24.8,31.9 28.8,20.9 40.5,19.5 48.9,11.3 60.0,15.0 71.1,11.3 79.5,19.5 91.2,20.9 95.2,31.9 105.0,38.3 103.9,50.0Z" fill="#fff" stroke="#f47b62" stroke-width="3" stroke-linejoin="round"/></svg><span><b>3층 1현</b>!! 예약제 !!</span></div>
   </div>
   <div class="home-actions">
     <button class="btn btn-ghost" id="goInfo" type="button">부스 안내</button>
@@ -194,11 +201,11 @@ label.field input:focus { border-color: var(--berry); outline: none; }
   <div class="panel section">
     <dl class="info-list">
       <div><dt>운영</dt><dd>성신여고 수학 동아리 <b>매쓰로그</b></dd></div>
-      <div><dt>메뉴</dt><dd>다양한 앙금으로 즐기는 과일 모찌</dd></div>
-      <div><dt>위치</dt><dd><span class="placeholder">부스 위치 입력 예정</span></dd></div>
+      <div><dt>메뉴</dt><dd>팥, 요거트, 초코 앙금과 과일모찌</dd></div>
+      <div><dt>위치</dt><dd>3층 1현</dd></div>
       <div><dt>가격</dt><dd><span class="placeholder">가격 입력 예정</span></dd></div>
-      <div><dt>과일</dt><dd><span class="placeholder">과일 종류 입력 예정</span></dd></div>
-      <div><dt>앙금</dt><dd><span class="placeholder">앙금 종류 입력 예정</span></dd></div>
+      <div><dt>과일</dt><dd>딸기, 귤, 청포도, 블루베리</dd></div>
+      <div><dt>앙금</dt><dd>팥, 요거트, 초코</dd></div>
     </dl>
   </div>
   <div class="section">
@@ -228,14 +235,14 @@ label.field input:focus { border-color: var(--berry); outline: none; }
   <div class="steps" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
   <div id="bookNotice" class="notice" hidden></div>
 
-  <div class="section" id="statusSection">
-    <h3>타임별 예약 현황</h3>
-    <div id="slotView" class="section"></div>
-  </div>
-
   <div class="section" data-step="1">
     <h3>몇 명이 오시나요?</h3>
     <div class="people" id="peopleGrid"></div>
+  </div>
+
+  <div class="section" id="statusSection">
+    <h3>타임별 예약 현황</h3>
+    <div id="slotView" class="section"></div>
   </div>
 
   <div class="section" data-step="2" hidden>
@@ -405,7 +412,7 @@ function renderBook() {
   $(".steps").hidden = book.step === 5;
   const maxLeft = Math.max(...SLOTS.map(s => CAP - (cnt[s.id] || 0)));
   $("#peopleGrid").innerHTML = Array.from({ length: CAP }, (_, i) => i + 1).map(n =>
-    `<button type="button" data-people="${n}" class="${book.people === n ? "sel" : ""}" ${ready && n > maxLeft ? "disabled" : ""}>${n}<small>명</small></button>`).join("");
+    `<button type="button" aria-label="${n}명" data-people="${n}" class="${book.people === n ? "sel" : ""}" ${ready && n > maxLeft ? "disabled" : ""}>${n}</button>`).join("");
   $("#pickedPeople").textContent = book.people;
   $("#slotPick").innerHTML = slotGrid("pick");
   $("#slotView").innerHTML = slotGrid("view");
@@ -597,7 +604,7 @@ boot();
 (() => {
   const page = document.querySelector('[data-view="book"]'), box = document.getElementById("bgMochi");
   const steps = [...page.querySelectorAll('[data-step="1"], [data-step="2"]')];
-  const fruits = ["#e2445f", "#f4a63a", "#7cba4f", "#8a5bc4"];
+  const fruits = ["#e2332a", "#f39a1f", "#a6cf55", "#4a52b5"];
   const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const G = 1600;
   let W = 0, H = 0, list = [], raf = 0, last = 0;
