@@ -61,7 +61,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 400; text-wrap: bala
 /* Background: mochi bouncing on the floor behind the people/time steps of booking (positions driven by the script at the end). */
 .bg-mochi { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
 .page { position: relative; z-index: 1; }
-.bm { position: absolute; left: 0; top: 0; transform-origin: 50% 100%; will-change: transform; opacity: 0.75; }
+.bm { position: absolute; left: 0; top: 0; transform-origin: 50% 50%; will-change: transform; opacity: 0.75; }
 .bm .mochi { display: block; width: var(--w); height: calc(var(--w) * 0.82); border-width: 2px; box-shadow: 0 6px 14px rgba(120, 60, 70, 0.10); }
 .bm .mochi::after { width: calc(var(--w) * 0.34); height: calc(var(--w) * 0.34); margin-left: calc(var(--w) * -0.17); }
 #home::before { content: ""; position: absolute; left: -20%; right: -20%; bottom: 0; height: 40%; background: var(--bg-floor); border-radius: 50% 50% 0 0 / 22% 22% 0 0; z-index: 0; }
@@ -600,28 +600,29 @@ show("home");
 boot();
 </script>
 <script>
-// Bouncing mochi behind the booking page while choosing headcount or time. Each one keeps its own bounce height forever, drifts sideways, and squashes on landing.
+// Small mochi hopping along the left and right walls behind the booking page while choosing headcount or time.
+// Each one is pulled toward its own wall, hops off it a little, and drifts slowly up or down.
 (() => {
   const page = document.querySelector('[data-view="book"]'), box = document.getElementById("bgMochi");
   const steps = [...page.querySelectorAll('[data-step="1"], [data-step="2"]')];
   const fruits = ["#e2332a", "#f39a1f", "#a6cf55", "#4a52b5"];
   const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const G = 1600;
+  const G = 420;
   let W = 0, H = 0, list = [], raf = 0, last = 0;
 
   function build() {
     W = box.clientWidth; H = box.clientHeight;
     if (!W || !H) return;
     box.textContent = "";
-    list = Array.from({ length: fruits.length }, (_, i) => {
-      const w = 34 + Math.random() * 40, h = w * 0.82;
+    list = fruits.map((fruit, i) => {
+      const w = 22 + Math.random() * 10, h = w * 0.82;
       const el = document.createElement("div");
       el.className = "bm";
-      el.innerHTML = `<span class="mochi" style="--w:${w.toFixed(0)}px;--fruit:${fruits[i % fruits.length]}"></span>`;
+      el.innerHTML = `<span class="mochi" style="--w:${w.toFixed(0)}px;--fruit:${fruit}"></span>`;
       box.appendChild(el);
-      const jump = H * (0.3 + Math.random() * 0.5);
-      return { el, w, h, x: Math.random() * (W - w), y: H - h - Math.random() * jump,
-               vx: (Math.random() < 0.5 ? -1 : 1) * (25 + Math.random() * 55), vy: 0,
+      const jump = 14 + Math.random() * 18;
+      return { el, w, h, side: i % 2 ? 1 : -1, d: Math.random() * jump, vd: 0,
+               y: H * (0.15 + 0.7 * Math.random()), vy: (Math.random() < 0.5 ? -1 : 1) * (12 + Math.random() * 14),
                launch: Math.sqrt(2 * G * jump), squash: 0 };
     });
     draw();
@@ -629,19 +630,20 @@ boot();
 
   function draw() {
     for (const m of list) {
-      const q = m.squash > 0 ? Math.sin((m.squash / 0.16) * Math.PI) * 0.22 : 0;
-      const tilt = m.vx * 0.06;
-      m.el.style.transform = `translate(${m.x.toFixed(1)}px, ${m.y.toFixed(1)}px) rotate(${tilt.toFixed(1)}deg) scale(${1 + q}, ${1 - q})`;
+      const q = m.squash > 0 ? Math.sin((m.squash / 0.2) * Math.PI) * 0.18 : 0;
+      // Rotate so the mochi's flat bottom faces its wall; squash happens along that axis.
+      const x = m.side < 0 ? m.d + (m.h - m.w) / 2 : W - m.d - (m.h + m.w) / 2;
+      m.el.style.transform = `translate(${x.toFixed(1)}px, ${m.y.toFixed(1)}px) rotate(${m.side < 0 ? 90 : -90}deg) scale(${1 + q}, ${1 - q})`;
     }
   }
 
   function step(t) {
     const dt = Math.min(0.05, (t - (last || t)) / 1000); last = t;
     for (const m of list) {
-      m.vy += G * dt; m.x += m.vx * dt; m.y += m.vy * dt;
-      if (m.x < 0) { m.x = 0; m.vx = Math.abs(m.vx); }
-      if (m.x > W - m.w) { m.x = W - m.w; m.vx = -Math.abs(m.vx); }
-      if (m.y > H - m.h) { m.y = H - m.h; m.vy = -m.launch; m.squash = 0.16; }
+      m.vd -= G * dt; m.d += m.vd * dt; m.y += m.vy * dt;
+      if (m.d < 0) { m.d = 0; m.vd = m.launch; m.squash = 0.2; }
+      if (m.y < 8) { m.y = 8; m.vy = Math.abs(m.vy); }
+      if (m.y > H - m.w - 8) { m.y = H - m.w - 8; m.vy = -Math.abs(m.vy); }
       if (m.squash > 0) m.squash = Math.max(0, m.squash - dt);
     }
     draw();
