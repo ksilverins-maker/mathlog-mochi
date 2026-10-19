@@ -65,6 +65,11 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 400; text-wrap: bala
 .mochi { width: 50px; height: 41px; border-radius: 50% 50% 46% 46% / 62% 62% 38% 38%; background: var(--surface); border: 2px solid var(--line); position: relative; }
 .mochi::after { content: ""; position: absolute; left: 50%; top: 28%; width: 17px; height: 17px; margin-left: -8.5px; border-radius: 50%; background: var(--fruit); }
 .home-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 420px; margin-top: 14vh; position: relative; z-index: 1; }
+/* Background: mochi bouncing on the floor of the home screen (positions driven by the script at the end). */
+.bg-mochi { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+.bm { position: absolute; left: 0; top: 0; transform-origin: 50% 100%; will-change: transform; opacity: 0.75; }
+.bm .mochi { display: block; width: var(--w); height: calc(var(--w) * 0.82); border-width: 2px; box-shadow: 0 6px 14px rgba(120, 60, 70, 0.10); }
+.bm .mochi::after { width: calc(var(--w) * 0.34); height: calc(var(--w) * 0.34); margin-left: calc(var(--w) * -0.17); }
 .home-admin { position: absolute; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%); font-size: 0.8rem; color: var(--muted); background: none; border: 0; text-decoration: underline; text-underline-offset: 3px; z-index: 1; }
 
 .btn { border: 0; border-radius: 16px; padding: 15px 18px; font-family: var(--font-display); font-size: 1.15rem; }
@@ -161,6 +166,7 @@ label.field input:focus { border-color: var(--berry); outline: none; }
 
 <!-- HOME -->
 <section id="home" data-view="home">
+  <div class="bg-mochi" id="bgMochi" aria-hidden="true"></div>
   <div class="club">성신여고 수학 동아리 매쓰로그</div>
   <div class="home-mid">
     <div class="tagline">다양한 앙금으로 즐기는</div>
@@ -583,6 +589,67 @@ async function boot() {
 
 show("home");
 boot();
+</script>
+<script>
+// Bouncing mochi behind the home screen. Each one keeps its own bounce height forever, drifts sideways, and squashes on landing.
+(() => {
+  const home = document.getElementById("home"), box = document.getElementById("bgMochi");
+  const fruits = ["#e2445f", "#f4a63a", "#7cba4f", "#8a5bc4", "#ff7aa2", "#f6d04d"];
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const G = 1600;
+  let W = 0, H = 0, list = [], raf = 0, last = 0;
+
+  function build() {
+    W = box.clientWidth; H = box.clientHeight;
+    if (!W || !H) return;
+    box.textContent = "";
+    const n = Math.max(6, Math.min(12, Math.round(W / 110)));
+    list = Array.from({ length: n }, (_, i) => {
+      const w = 34 + Math.random() * 40, h = w * 0.82;
+      const el = document.createElement("div");
+      el.className = "bm";
+      el.innerHTML = `<span class="mochi" style="--w:${w.toFixed(0)}px;--fruit:${fruits[i % fruits.length]}"></span>`;
+      box.appendChild(el);
+      const jump = H * (0.3 + Math.random() * 0.5);
+      return { el, w, h, x: Math.random() * (W - w), y: H - h - Math.random() * jump,
+               vx: (Math.random() < 0.5 ? -1 : 1) * (25 + Math.random() * 55), vy: 0,
+               launch: Math.sqrt(2 * G * jump), squash: 0 };
+    });
+    draw();
+  }
+
+  function draw() {
+    for (const m of list) {
+      const q = m.squash > 0 ? Math.sin((m.squash / 0.16) * Math.PI) * 0.22 : 0;
+      const tilt = m.vx * 0.06;
+      m.el.style.transform = `translate(${m.x.toFixed(1)}px, ${m.y.toFixed(1)}px) rotate(${tilt.toFixed(1)}deg) scale(${1 + q}, ${1 - q})`;
+    }
+  }
+
+  function step(t) {
+    const dt = Math.min(0.05, (t - (last || t)) / 1000); last = t;
+    for (const m of list) {
+      m.vy += G * dt; m.x += m.vx * dt; m.y += m.vy * dt;
+      if (m.x < 0) { m.x = 0; m.vx = Math.abs(m.vx); }
+      if (m.x > W - m.w) { m.x = W - m.w; m.vx = -Math.abs(m.vx); }
+      if (m.y > H - m.h) { m.y = H - m.h; m.vy = -m.launch; m.squash = 0.16; }
+      if (m.squash > 0) m.squash = Math.max(0, m.squash - dt);
+    }
+    draw();
+    raf = requestAnimationFrame(step);
+  }
+
+  function sync() {
+    cancelAnimationFrame(raf); raf = 0; last = 0;
+    if (home.hidden) return;
+    if (box.clientWidth !== W || box.clientHeight !== H || !list.length) build();
+    if (!still && list.length) raf = requestAnimationFrame(step);
+  }
+
+  new MutationObserver(sync).observe(home, { attributes: true, attributeFilter: ["hidden"] });
+  addEventListener("resize", () => { W = 0; sync(); });
+  sync();
+})();
 </script>
 </body>
 </html>
