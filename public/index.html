@@ -96,6 +96,9 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 400; text-wrap: bala
 .placeholder { background: var(--berry-soft); color: var(--berry); border-radius: 6px; padding: 0 6px; font-size: 0.85em; white-space: nowrap; }
 
 /* Booth info */
+.howto { margin: 0; padding: 0; list-style: none; counter-reset: how; display: grid; gap: 8px; }
+.howto li { counter-increment: how; display: flex; align-items: center; gap: 12px; background: var(--surface); border: 2px solid var(--line); border-radius: 16px; padding: 10px 14px; }
+.howto li::before { content: counter(how); flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--berry); color: var(--on-berry); display: grid; place-items: center; font-family: var(--font-display); }
 .info-list { display: grid; gap: 12px; margin: 0; }
 .info-list div { display: grid; grid-template-columns: 5.5em 1fr; gap: 8px; }
 .info-list dt { color: var(--muted); }
@@ -196,11 +199,9 @@ label.field input:focus { border-color: var(--berry); outline: none; }
   <h2 style="font-size:1.8rem">부스 안내</h2>
   <div class="panel section">
     <dl class="info-list">
-      <div><dt>운영</dt><dd>성신여고 수학 동아리 <b>매쓰로그</b></dd></div>
-      <div><dt>메뉴</dt><dd>팥, 요거트, 초코 앙금과 과일모찌</dd></div>
-      <div><dt>위치</dt><dd>3층 1현</dd></div>
-      <div><dt>가격</dt><dd><span class="placeholder">가격 입력 예정</span></dd></div>
-      <div><dt>과일</dt><dd>딸기, 귤, 청포도, 블루베리</dd></div>
+      <div><dt>메뉴</dt><dd>과일모찌</dd></div>
+      <div><dt>위치</dt><dd>3층 1현 교실</dd></div>
+      <div><dt>과일</dt><dd>딸기, 귤, 샤인머스캣, 블루베리</dd></div>
       <div><dt>앙금</dt><dd>팥, 요거트, 초코</dd></div>
     </dl>
   </div>
@@ -214,6 +215,15 @@ label.field input:focus { border-color: var(--berry); outline: none; }
       <div class="sched-row open"><span>3부 운영</span><span>16:40 – 18:00</span></div>
       <div class="sched-row close"><span>마감</span><span>18:00</span></div>
     </div>
+  </div>
+  <div class="section">
+    <h3>이용 방법</h3>
+    <ol class="howto">
+      <li>게임을 진행한다</li>
+      <li>게임 결과에 따라 모찌 재료를 선택한다</li>
+      <li>모찌를 직접 만든다</li>
+      <li>맛있게 먹는다</li>
+    </ol>
   </div>
   <div class="section">
     <h3>예약 안내</h3>
