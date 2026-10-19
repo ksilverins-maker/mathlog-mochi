@@ -55,8 +55,8 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 400; text-wrap: bala
 .tagline { font-family: var(--font-display); font-size: clamp(1.35rem, 5.5vw, 1.9rem); color: var(--berry); }
 .title { font-family: var(--font-title); font-size: clamp(4.8rem, 25.5vw, 10rem); color: var(--berry); line-height: 1; letter-spacing: -0.02em; }
 .mochi-row { display: flex; gap: 14px; margin-top: 2px; }
-.mochi { width: 48px; height: 39px; border-radius: 50% 50% 46% 46% / 62% 62% 38% 38%; background: var(--surface); border: 2px solid #ecdcd0; box-shadow: inset 0 -4px 0 #f3e9e1; position: relative; }
-.mochi::after { content: ""; position: absolute; left: 50%; top: 28%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background: var(--fruit); }
+.mochi { width: 60px; height: 49px; border-radius: 50% 50% 46% 46% / 62% 62% 38% 38%; background: var(--surface); border: 2px solid #ecdcd0; box-shadow: inset 0 -4px 0 #f3e9e1; position: relative; }
+.mochi::after { content: ""; position: absolute; left: 50%; top: 28%; width: 20px; height: 20px; margin-left: -10px; border-radius: 50%; background: var(--fruit); }
 .home-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 420px; margin-top: 10vh; position: relative; z-index: 1; }
 .home-actions .btn { font-size: 1.55rem; line-height: 1.92rem; } /* bigger label, same button height as .btn (1.2rem x 1.6 line) */
 /* Background: mochi bouncing on the floor behind the people/time steps of booking (positions driven by the script at the end). */
@@ -68,7 +68,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 400; text-wrap: bala
 #home::before { content: ""; position: absolute; left: -20%; right: -20%; bottom: 0; height: 40%; background: var(--bg-floor); border-radius: 50% 50% 0 0 / 22% 22% 0 0; z-index: 0; }
 .deco { position: absolute; pointer-events: none; z-index: 0; }
 .deco-straw { top: 14px; right: -8px; width: clamp(84px, 21vw, 145px); transform: rotate(18deg); }
-.deco-blue { left: -8px; top: 53%; width: clamp(66px, 17vw, 108px); }
+.deco-blue { left: -8px; top: 59%; width: clamp(66px, 17vw, 108px); }
 .deco-tang { left: 3%; bottom: 3%; width: clamp(66px, 17vw, 128px); }
 .deco-grape { right: 4%; bottom: 3%; width: clamp(64px, 16vw, 120px); }
 .home-admin { position: absolute; bottom: calc(44px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%); font-size: 0.8rem; color: var(--muted); background: none; border: 0; text-decoration: underline; text-underline-offset: 3px; z-index: 1; }
