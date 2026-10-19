@@ -602,7 +602,7 @@ boot();
   const steps = [...page.querySelectorAll('[data-step="1"], [data-step="2"]')];
   const fruits = ["#e2332a", "#f39a1f", "#a6cf55", "#4a52b5"];
   const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const G = 420;
+  const G = 150;
   let W = 0, H = 0, list = [], raf = 0, last = 0;
 
   function build() {
@@ -615,9 +615,9 @@ boot();
       el.className = "bm";
       el.innerHTML = `<span class="mochi" style="--w:${w.toFixed(0)}px;--fruit:${fruit}"></span>`;
       box.appendChild(el);
-      const jump = 14 + Math.random() * 18;
+      const jump = 45 + Math.random() * 45;
       return { el, w, h, side: i % 2 ? 1 : -1, d: Math.random() * jump, vd: 0,
-               y: H * (0.15 + 0.7 * Math.random()), vy: (Math.random() < 0.5 ? -1 : 1) * (12 + Math.random() * 14),
+               y: H * (0.15 + 0.7 * Math.random()), vy: (Math.random() < 0.5 ? -1 : 1) * (7 + Math.random() * 8),
                launch: Math.sqrt(2 * G * jump), squash: 0 };
     });
     draw();
