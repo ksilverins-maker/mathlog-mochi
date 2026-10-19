@@ -96,6 +96,8 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 400; text-wrap: bala
 .placeholder { background: var(--berry-soft); color: var(--berry); border-radius: 6px; padding: 0 6px; font-size: 0.85em; white-space: nowrap; }
 
 /* Booth info */
+.notes { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; }
+.notes li::marker { color: var(--berry); }
 .howto { margin: 0; padding: 0; list-style: none; counter-reset: how; display: grid; gap: 8px; }
 .howto li { counter-increment: how; display: flex; align-items: center; gap: 12px; background: var(--surface); border: 2px solid var(--line); border-radius: 16px; padding: 10px 14px; }
 .howto li::before { content: counter(how); flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--berry); color: var(--on-berry); display: grid; place-items: center; font-family: var(--font-display); }
@@ -228,7 +230,11 @@ label.field input:focus { border-color: var(--berry); outline: none; }
   <div class="section">
     <h3>예약 안내</h3>
     <div class="panel">
-      <p style="margin:0">10분마다 한 타임씩 받아요. 한 타임에 최대 8명(4명씩 두 팀)까지 함께할 수 있어요. 예약한 시간에 맞춰 부스로 와 주세요.</p>
+      <ul class="notes">
+        <li>한 타임 10분으로 운영</li>
+        <li>한 타임 당 최대 8명</li>
+        <li>예약한 시간에 맞춰 부스로 방문</li>
+      </ul>
     </div>
   </div>
   <button class="btn btn-primary" type="button" data-go="book">예약하러 가기</button>
