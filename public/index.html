@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>매쓰로그 과일 모찌</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Dongle:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Jua&family=Gowun+Dodum&display=swap">
 <style>
 /* Layout: one-screen phone app. Home is a vertical stack (small top line, medium line, big centre title, buttons at bottom); inner pages are a single 520px column. */
 :root {
@@ -24,9 +24,8 @@
   --on-berry: #ffffff;
   --straw: #e2332a; --tang: #f39a1f; --grape: #a6cf55; --blue: #4a52b5;
   --font-title: "Black Han Sans", "Jua", "Malgun Gothic", sans-serif;
-  /* Display: Dongle, the closest match to the poster's club line. Its glyphs are small, so display sizes below are about 1.5x. */
-  --font-display: "Dongle", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
-  --font-body: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-display: "Jua", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --font-body: "Gowun Dodum", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
   color-scheme: light;
 }
 [hidden] { display: none !important; }
@@ -40,7 +39,7 @@ body {
 * { box-sizing: border-box; }
 button { font: inherit; color: inherit; cursor: pointer; }
 button:focus-visible, input:focus-visible, a:focus-visible { outline: 3px solid var(--berry); outline-offset: 2px; }
-h1, h2, h3 { font-family: var(--font-display); font-weight: 700; text-wrap: balance; margin: 0; line-height: 1; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 400; text-wrap: balance; margin: 0; line-height: 1.25; }
 .num { font-variant-numeric: tabular-nums; }
 
 /* ---------- Home ---------- */
@@ -51,10 +50,10 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; text-wrap: bala
   padding-right: max(16px, env(safe-area-inset-right, 0px));
   position: relative; overflow: hidden;
 }
-.club { font-family: var(--font-display); font-weight: 700; font-size: 1.85rem; line-height: 1; letter-spacing: 0.02em; color: var(--berry); margin-bottom: 10vh; position: relative; z-index: 1; }
+.club { font-family: var(--font-display); font-size: 1rem; letter-spacing: 0.02em; color: var(--berry); margin-bottom: 10vh; position: relative; z-index: 1; }
 .home-mid { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; position: relative; z-index: 1; }
-.tagline { font-family: var(--font-display); font-weight: 700; line-height: 1; font-size: clamp(2.4rem, 9.5vw, 3.3rem); color: var(--berry); }
-.title { font-family: var(--font-title); font-size: clamp(4.8rem, 25.5vw, 10rem); color: var(--berry); line-height: 1; letter-spacing: -0.02em; }
+.tagline { font-family: var(--font-display); font-size: clamp(1.35rem, 5.5vw, 1.9rem); color: var(--berry); }
+.title { font-family: var(--font-title); font-size: clamp(4.4rem, 24vw, 8.5rem); color: var(--berry); line-height: 1; letter-spacing: -0.02em; }
 .mochi-row { display: flex; gap: 14px; margin-top: 2px; }
 .mochi { width: 40px; height: 33px; border-radius: 50% 50% 46% 46% / 62% 62% 38% 38%; background: var(--surface); border: 2px solid #ecdcd0; box-shadow: inset 0 -4px 0 #f3e9e1; position: relative; }
 .mochi::after { content: ""; position: absolute; left: 50%; top: 28%; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; background: var(--fruit); }
@@ -73,7 +72,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; text-wrap: bala
 .deco-grape { right: 4%; bottom: 3%; width: clamp(46px, 11vw, 90px); }
 .home-admin { position: absolute; bottom: calc(44px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%); font-size: 0.8rem; color: var(--muted); background: none; border: 0; text-decoration: underline; text-underline-offset: 3px; z-index: 1; }
 
-.btn { border: 0; border-radius: 999px; padding: 12px 18px 10px; font-family: var(--font-display); font-weight: 700; font-size: 2.15rem; line-height: 1; }
+.btn { border: 0; border-radius: 999px; padding: 15px 18px; font-family: var(--font-display); font-size: 1.2rem; }
 .btn-primary { background: var(--berry); color: var(--on-berry); box-shadow: 0 4px 0 #b52119; }
 .btn-ghost { background: var(--surface); border: 2px solid var(--berry); color: var(--berry); }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
@@ -88,9 +87,9 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; text-wrap: bala
 }
 .topbar { display: flex; align-items: center; gap: 8px; min-height: 48px; }
 .back { background: none; border: 0; padding: 8px 10px 8px 0; font-size: 1rem; color: var(--muted); }
-.topbar h2 { font-size: 2.2rem; }
+.topbar h2 { font-size: 1.5rem; }
 .section { display: flex; flex-direction: column; gap: 12px; }
-.section h3 { font-size: 2.15rem; color: var(--berry); }
+.section h3 { font-size: 1.25rem; color: var(--berry); }
 .hint { color: var(--muted); font-size: 0.9rem; margin: 0; }
 .panel { background: var(--surface); border: 2px solid var(--line); border-radius: 22px; padding: 16px; }
 .placeholder { background: var(--berry-soft); color: var(--berry); border-radius: 6px; padding: 0 6px; font-size: 0.85em; white-space: nowrap; }
@@ -111,14 +110,14 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; text-wrap: bala
 .steps span { flex: 1; height: 5px; border-radius: 3px; background: var(--line); }
 .steps span.on { background: var(--berry); }
 .people { display: flex; flex-wrap: wrap; gap: 10px; }
-.people button { width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--line); background: var(--surface); font-family: var(--font-body); font-weight: 500; font-size: 1.2rem; display: grid; place-items: center; line-height: 1; padding: 0; }
+.people button { width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--line); background: var(--surface); font-family: var(--font-display); font-size: 1.35rem; display: grid; place-items: center; line-height: 1; padding: 0; }
 .people button.sel { border-color: var(--berry); background: var(--berry); color: var(--on-berry); }
 .people button:disabled { opacity: 0.35; cursor: not-allowed; }
 
-.session-label { font-weight: 700; font-size: 0.92rem; color: var(--muted); display: flex; justify-content: space-between; }
+.session-label { font-family: var(--font-display); font-size: 1rem; color: var(--muted); display: flex; justify-content: space-between; }
 .slots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .slot { border: 2px solid var(--line); background: var(--surface); border-radius: 16px; padding: 8px 4px 9px; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
-.slot b { font-weight: 700; font-size: 1.02rem; }
+.slot b { font-family: var(--font-display); font-weight: 400; font-size: 1.1rem; }
 .dots { display: grid; grid-template-columns: repeat(4, 7px); gap: 3px; }
 .dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--line); }
 .dots i.f { background: var(--berry); }
@@ -139,18 +138,18 @@ label.field input:focus { border-color: var(--berry); outline: none; }
 .row-actions { display: grid; grid-template-columns: 1fr 2fr; gap: 10px; }
 
 .notice { padding: 12px 14px; border-radius: 14px; background: var(--berry-soft); color: var(--ink); font-size: 0.92rem; }
-.done-mark { font-family: var(--font-display); font-weight: 700; font-size: 3.2rem; line-height: 1; color: var(--leaf); text-align: center; }
+.done-mark { font-family: var(--font-display); font-size: 2rem; color: var(--leaf); text-align: center; }
 .code { font-family: var(--font-display); font-size: 1.6rem; letter-spacing: 0.08em; text-align: center; color: var(--berry); }
 
 /* Admin */
 .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .stat { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; }
-.stat b { display: block; font-weight: 700; font-size: 1.4rem; }
+.stat b { display: block; font-family: var(--font-display); font-weight: 400; font-size: 1.5rem; }
 .stat span { font-size: 0.8rem; color: var(--muted); }
 .adm-slot { border-top: 1px solid var(--line); padding-top: 10px; display: grid; gap: 6px; }
-.adm-slot header { display: flex; justify-content: space-between; font-weight: 700; }
+.adm-slot header { display: flex; justify-content: space-between; font-family: var(--font-display); }
 .adm-item { display: grid; grid-template-columns: 2.6em 1fr auto; gap: 10px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; }
-.adm-item .pp { font-weight: 700; color: var(--berry); }
+.adm-item .pp { font-family: var(--font-display); color: var(--berry); }
 .adm-item .who { min-width: 0; overflow-wrap: anywhere; }
 .adm-item .who small { display: block; color: var(--muted); }
 .mini { border: 1px solid var(--line); background: var(--bg); border-radius: 10px; padding: 6px 10px; font-size: 0.85rem; }
@@ -193,7 +192,7 @@ label.field input:focus { border-color: var(--berry); outline: none; }
 <!-- BOOTH INFO -->
 <section class="page" data-view="info" hidden>
   <div class="topbar"><button class="back" type="button" data-go="home">← 처음으로</button></div>
-  <h2 style="font-size:3.1rem">부스 안내</h2>
+  <h2 style="font-size:1.8rem">부스 안내</h2>
   <div class="panel section">
     <dl class="info-list">
       <div><dt>운영</dt><dd>성신여고 수학 동아리 <b>매쓰로그</b></dd></div>
@@ -227,7 +226,7 @@ label.field input:focus { border-color: var(--berry); outline: none; }
 <!-- BOOKING -->
 <section class="page" data-view="book" hidden>
   <div class="topbar"><button class="back" type="button" id="bookBack">← 처음으로</button></div>
-  <h2 style="font-size:3.1rem">예약하기</h2>
+  <h2 style="font-size:1.8rem">예약하기</h2>
   <div class="steps" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
   <div id="bookNotice" class="notice" hidden></div>
 
@@ -290,7 +289,7 @@ label.field input:focus { border-color: var(--berry); outline: none; }
 <!-- ADMIN -->
 <section class="page" data-view="admin" hidden>
   <div class="topbar"><button class="back" type="button" data-go="home">← 처음으로</button></div>
-  <h2 style="font-size:3.1rem">관리자</h2>
+  <h2 style="font-size:1.8rem">관리자</h2>
   <form id="adminLocked" class="section panel" novalidate>
     <p style="margin:0">관리자 이메일과 비밀번호로 로그인하면 예약자 이름과 번호를 볼 수 있어요.</p>
     <label class="field" for="adminEmail">이메일
