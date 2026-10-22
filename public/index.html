@@ -346,11 +346,14 @@ const FIREBASE_CONFIG = {
 };
 
 const CAP = 8;
+// opensAt: when booking for that session opens (KST). firestore.rules checks the same moments.
 const SESSIONS = [
-  { name: "1부", start: "13:00", end: "14:20" },
-  { name: "2부", start: "14:50", end: "16:10" },
-  { name: "3부", start: "16:40", end: "18:00" },
+  { name: "1부", start: "13:00", end: "14:20", opensAt: Date.parse("2026-10-23T12:30:00+09:00") },
+  { name: "2부", start: "14:50", end: "16:10", opensAt: Date.parse("2026-10-23T12:30:00+09:00") },
+  { name: "3부", start: "16:40", end: "18:00", opensAt: Date.parse("2026-10-23T16:30:00+09:00") },
 ];
+const isOpen = si => Date.now() >= SESSIONS[si].opensAt;
+const openLabel = si => { const d = new Date(SESSIONS[si].opensAt + 9 * 3600e3); return `${d.getUTCMonth() + 1}월 ${d.getUTCDate()}일 ${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}`; };
 const toMin = t => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
 const fmt = m => String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0");
 const SLOTS = [];
@@ -404,28 +407,30 @@ function slotGrid(mode, c = cnt) {
     const cells = list.map(x => {
       const n = c[x.id] || 0, left = CAP - n, full = left <= 0;
       if (mode === "view") return `<div class="slot view ${full ? "full" : ""}"><b class="num">${x.label}</b>${dots(n)}<span class="cnt num">${full ? "마감" : n + " / " + CAP + "명"}</span></div>`;
-      const ok = ready && left >= book.people;
-      return `<button type="button" class="slot ${full ? "full" : ""} ${book.slot === x.id ? "sel" : ""}" data-slot="${x.id}" ${ok ? "" : "disabled"} aria-label="${x.label}, 남은 자리 ${left}명"><b class="num">${x.label}</b>${dots(n)}<span class="cnt num">${full ? "마감" : "남은 " + left + "명"}</span></button>`;
+      const open = isOpen(si), ok = ready && open && left >= book.people;
+      return `<button type="button" class="slot ${full ? "full" : ""} ${book.slot === x.id ? "sel" : ""}" data-slot="${x.id}" ${ok ? "" : "disabled"} aria-label="${x.label}, ${open ? "남은 자리 " + left + "명" : "예약 오픈 전"}"><b class="num">${x.label}</b>${dots(n)}<span class="cnt num">${!open ? "오픈 전" : full ? "마감" : "남은 " + left + "명"}</span></button>`;
     }).join("");
-    return `<div class="section" style="gap:8px"><div class="session-label"><span>${s.name} · ${s.start}–${s.end}</span><span class="num">${total}명 예약</span></div><div class="slots">${cells}</div></div>`;
+    const side = isOpen(si) ? `${total}명 예약` : `${openLabel(si)} 오픈`;
+    return `<div class="section" style="gap:8px"><div class="session-label"><span>${s.name} · ${s.start}–${s.end}</span><span class="num">${side}</span></div><div class="slots">${cells}</div></div>`;
   }).join("");
 }
 
 // ---------- booking ----------
 function renderBook() {
   const notice = $("#bookNotice");
-  const msg = loadError || (!ready ? "예약 현황을 불러오고 있어요." : "");
+  const anyOpen = SESSIONS.some((_, si) => isOpen(si));
+  const msg = loadError || (!ready ? "예약 현황을 불러오고 있어요." : !anyOpen ? `예약은 ${openLabel(0)}부터 받아요. 3부는 ${openLabel(2)}부터 열려요.` : "");
   notice.textContent = msg; notice.hidden = !msg;
   $$(".steps span").forEach((s, i) => s.classList.toggle("on", i < Math.min(book.step, 4)));
   $$("[data-step]").forEach(el => { el.hidden = Number(el.dataset.step) !== book.step; });
   $(".steps").hidden = book.step === 5;
-  const maxLeft = Math.max(...SLOTS.map(s => CAP - (cnt[s.id] || 0)));
+  const maxLeft = Math.max(0, ...SLOTS.filter(s => isOpen(s.session)).map(s => CAP - (cnt[s.id] || 0)));
   $("#peopleGrid").innerHTML = Array.from({ length: CAP }, (_, i) => i + 1).map(n =>
     `<button type="button" aria-label="${n}명" data-people="${n}" class="${book.people === n ? "sel" : ""}" ${ready && n > maxLeft ? "disabled" : ""}>${n}</button>`).join("");
-  if (book.step <= 2 && book.slot && CAP - (cnt[book.slot] || 0) < book.people) book.slot = "";
+  if (book.step <= 2 && book.slot && (CAP - (cnt[book.slot] || 0) < book.people || !isOpen(slotById[book.slot].session))) book.slot = "";
   $("#slotPick").innerHTML = slotGrid("pick");
   $("#slotView").innerHTML = slotGrid("view");
-  $("#peopleNext").disabled = !book.people || (ready && book.people > maxLeft);
+  $("#peopleNext").disabled = !book.people || !anyOpen || (ready && book.people > maxLeft);
   const nextBtn = $("#slotNext"); if (nextBtn) nextBtn.disabled = !book.slot;
   $("#statusSection").hidden = book.step !== 1;
   $("#phoneHint").textContent = book.people > 1 ? `${book.people}명 중 대표 한 명의 이름과 번호만 적어 주세요.` : "예약하는 분의 이름과 번호를 적어 주세요.";
@@ -445,6 +450,7 @@ $("#peopleGrid").addEventListener("click", e => {
   if (book.slot && CAP - (cnt[book.slot] || 0) < book.people) book.slot = "";
   renderBook();
 });
+setInterval(() => { if (!$('[data-view="book"]').hidden && book.step <= 2) renderBook(); }, 20000);
 $("#peopleNext").addEventListener("click", () => { if (book.people) { book.step = 2; renderBook(); } });
 $("#slotPick").addEventListener("click", e => {
   const b = e.target.closest("[data-slot]"); if (!b || b.disabled) return;
@@ -497,6 +503,7 @@ async function tryBooking(slot, people, name, phone) {
 $("#submitBtn").addEventListener("click", async () => {
   const btn = $("#submitBtn"), err = $("#submitErr");
   if (!db) { err.textContent = loadError || "아직 연결 중이에요. 잠시 후 다시 눌러 주세요."; return; }
+  if (!isOpen(slotById[book.slot].session)) { err.textContent = "아직 이 시간대 예약이 열리지 않았어요."; return; }
   btn.disabled = true; btn.textContent = "예약하는 중…"; err.textContent = "";
   try {
     const code = await placeBooking(book.slot, book.people, book.name, book.phone);

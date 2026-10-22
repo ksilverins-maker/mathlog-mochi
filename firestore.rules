@@ -22,6 +22,12 @@ service cloud.firestore {
                    '1450','1500','1510','1520','1530','1540','1550','1600',
                    '1640','1650','1700','1710','1720','1730','1740','1750'];
     }
+    // 예약 오픈 시각(서버 시간 기준): 1·2부 2026-10-23 12:30 KST, 3부 16:30 KST
+    function isOpen(s) {
+      return request.time >= (s in ['1640','1650','1700','1710','1720','1730','1740','1750']
+        ? timestamp.value(1792740600000)
+        : timestamp.value(1792726200000));
+    }
     function slotPath(s) { return /databases/$(database)/documents/slots/$(s); }
     function bookingPath(b) { return /databases/$(database)/documents/bookings/$(b); }
     function countBefore(s) { return exists(slotPath(s)) ? get(slotPath(s)).data.count : 0; }
@@ -48,6 +54,7 @@ service cloud.firestore {
       allow create: if
         request.resource.data.keys().hasOnly(['slot', 'people', 'name', 'phone', 'code', 'createdAt'])
         && validSlot(request.resource.data.slot)
+        && isOpen(request.resource.data.slot)
         && request.resource.data.people is int
         && request.resource.data.people >= 1
         && request.resource.data.people <= 8
