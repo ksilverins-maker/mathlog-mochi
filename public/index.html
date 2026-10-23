@@ -349,7 +349,7 @@ const CAP = 4;
 const SESSIONS = [
   { name: "1부", start: "13:00", end: "14:20", slots: ["1305", "1310", "1315", "1320", "1330", "1335", "1340", "1345", "1350", "1400", "1405", "1410", "1415"], opensAt: Date.parse("2026-10-23T12:30:00+09:00") },
   { name: "2부", start: "14:50", end: "16:10", slots: ["1450", "1455", "1500", "1505", "1510", "1520", "1525", "1530", "1535", "1540", "1550", "1555", "1605"], opensAt: Date.parse("2026-10-23T12:30:00+09:00") },
-  { name: "3부", start: "16:40", end: "18:00", slots: ["1640", "1645", "1650", "1655", "1700", "1710", "1715", "1720", "1725", "1730", "1740", "1745", "1750", "1755", "1800"], opensAt: Date.parse("2026-10-23T16:30:00+09:00") },
+  { name: "3부", start: "16:40", end: "18:00", slots: ["1640", "1645", "1650", "1655", "1700", "1710", "1715", "1720", "1725", "1730", "1740", "1745", "1750", "1755", "1800"], opensAt: Date.parse("2026-10-23T16:10:00+09:00") },
 ];
 const isOpen = si => Date.now() >= SESSIONS[si].opensAt;
 const openLabel = si => { const d = new Date(SESSIONS[si].opensAt + 9 * 3600e3); return `${d.getUTCMonth() + 1}월 ${d.getUTCDate()}일 ${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}`; };

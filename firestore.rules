@@ -25,10 +25,10 @@ service cloud.firestore {
                    '1715','1720','1725','1730','1740','1745','1750','1755',
                    '1800'];
     }
-    // 예약 오픈 시각(서버 시간 기준): 1·2부 2026-10-23 12:30 KST, 3부 16:30 KST
+    // 예약 오픈 시각(서버 시간 기준): 1·2부 2026-10-23 12:30 KST, 3부 16:10 KST
     function isOpen(s) {
       return request.time >= (s in ['1640','1645','1650','1655','1700','1710','1715','1720','1725','1730','1740','1745','1750','1755','1800']
-        ? timestamp.value(1792740600000)
+        ? timestamp.value(1792739400000)
         : timestamp.value(1792726200000));
     }
     function slotPath(s) { return /databases/$(database)/documents/slots/$(s); }
