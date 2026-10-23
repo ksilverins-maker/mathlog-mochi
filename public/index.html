@@ -124,7 +124,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 400; text-wrap: bala
 .slots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .slot { border: 2px solid var(--line); background: var(--surface); border-radius: 16px; padding: 8px 4px 9px; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
 .slot b { font-family: var(--font-display); font-weight: 400; font-size: 1.1rem; }
-.dots { display: grid; grid-template-columns: repeat(4, 7px); gap: 3px; }
+.dots { display: grid; grid-template-columns: repeat(4, 8px); gap: 4px; }
 .dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--line); }
 .dots i.f { background: var(--berry); }
 .slot .cnt { font-size: 0.72rem; color: var(--muted); }
@@ -231,8 +231,7 @@ label.field input:focus { border-color: var(--berry); outline: none; }
     <h3>예약 안내</h3>
     <div class="panel">
       <ul class="notes">
-        <li>한 타임 10분으로 운영</li>
-        <li>한 타임 당 최대 8명</li>
+        <li>한 타임 당 최대 4명</li>
         <li>예약한 시간에 맞춰 부스로 방문</li>
       </ul>
     </div>
@@ -260,7 +259,7 @@ label.field input:focus { border-color: var(--berry); outline: none; }
 
   <div class="section" data-step="2" hidden>
     <h3>예약할 시간을 골라 주세요</h3>
-    <p class="hint">점은 지금까지 예약된 인원이에요. 한 타임에 8명까지 받아요.</p>
+    <p class="hint">점은 지금까지 예약된 인원이에요. 한 타임에 4명까지 받아요.</p>
     <div id="slotPick" class="section"></div>
   </div>
 
@@ -345,12 +344,12 @@ const FIREBASE_CONFIG = {
   appId: "1:1031279605645:web:5d5b90a0eee2dbbe456fc4"
 };
 
-const CAP = 8;
+const CAP = 4;
 // opensAt: when booking for that session opens (KST). firestore.rules checks the same moments.
 const SESSIONS = [
-  { name: "1부", start: "13:00", end: "14:20", opensAt: Date.parse("2026-10-23T12:30:00+09:00") },
-  { name: "2부", start: "14:50", end: "16:10", opensAt: Date.parse("2026-10-23T12:30:00+09:00") },
-  { name: "3부", start: "16:40", end: "18:00", opensAt: Date.parse("2026-10-23T16:30:00+09:00") },
+  { name: "1부", start: "13:00", end: "14:20", slots: ["1305", "1310", "1315", "1320", "1330", "1335", "1340", "1345", "1350", "1400", "1405", "1410", "1415"], opensAt: Date.parse("2026-10-23T12:30:00+09:00") },
+  { name: "2부", start: "14:50", end: "16:10", slots: ["1450", "1455", "1500", "1505", "1510", "1520", "1525", "1530", "1535", "1540", "1550", "1555", "1605"], opensAt: Date.parse("2026-10-23T12:30:00+09:00") },
+  { name: "3부", start: "16:40", end: "18:00", slots: ["1640", "1645", "1650", "1655", "1700", "1710", "1715", "1720", "1725", "1730", "1740", "1745", "1750", "1755", "1800"], opensAt: Date.parse("2026-10-23T16:30:00+09:00") },
 ];
 const isOpen = si => Date.now() >= SESSIONS[si].opensAt;
 const openLabel = si => { const d = new Date(SESSIONS[si].opensAt + 9 * 3600e3); return `${d.getUTCMonth() + 1}월 ${d.getUTCDate()}일 ${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}`; };
@@ -358,7 +357,7 @@ const toMin = t => { const [h, m] = t.split(":").map(Number); return h * 60 + m;
 const fmt = m => String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0");
 const SLOTS = [];
 SESSIONS.forEach((s, si) => {
-  for (let m = toMin(s.start); m < toMin(s.end); m += 10) SLOTS.push({ id: fmt(m).replace(":", ""), label: fmt(m), end: fmt(m + 10), session: si });
+  for (const id of s.slots) SLOTS.push({ id, label: id.slice(0, 2) + ":" + id.slice(2), session: si });
 });
 const slotById = Object.fromEntries(SLOTS.map(s => [s.id, s]));
 const $ = s => document.querySelector(s);
@@ -438,7 +437,7 @@ function renderBook() {
 }
 function esc(t) { return String(t).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch])); }
 function sumRows(s, people, name, phone) {
-  return `<div><dt>시간</dt><dd class="num">${s.label} – ${s.end} (${SESSIONS[s.session].name})</dd></div>
+  return `<div><dt>시간</dt><dd class="num">${s.label} (${SESSIONS[s.session].name})</dd></div>
     <div><dt>인원</dt><dd class="num">${people}명</dd></div>
     <div><dt>예약자</dt><dd>${esc(name)}</dd></div>
     <div><dt>연락처</dt><dd class="num">${esc(phone)}</dd></div>`;
@@ -542,7 +541,7 @@ function renderAdmin() {
     const items = bySlot[s.id].map(r => `<div class="adm-item"><span class="pp num">${r.people}명</span>
       <span class="who">${esc(r.name)}<small class="num">${esc(r.phone)} · ${esc(r.code)}</small></span>
       <span style="display:flex;gap:6px"><button class="mini" type="button" data-copy="${esc(r.phone)}">복사</button><button class="mini danger" type="button" data-cancel="${esc(r.id)}">취소</button></span></div>`).join("");
-    return `<div class="adm-slot"><header><span class="num">${s.label} – ${s.end}</span><span class="num">${c[s.id]} / ${CAP}명</span></header>${items}</div>`;
+    return `<div class="adm-slot"><header><span class="num">${s.label}</span><span class="num">${c[s.id]} / ${CAP}명</span></header>${items}</div>`;
   }).join("");
   $("#adminList").innerHTML = html || '<p class="empty">아직 예약이 없어요. 예약이 들어오면 시간순으로 여기에 보여요.</p>';
 }

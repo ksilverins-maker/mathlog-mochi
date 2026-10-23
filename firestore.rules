@@ -2,7 +2,7 @@ rules_version = '2';
 
 // 매쓰로그 과일 모찌 예약 — Firestore 보안 규칙
 // - 누구나 타임별 인원(slots)은 볼 수 있어요.
-// - 누구나 예약(bookings)을 만들 수 있지만, 같은 요청에서 그 타임 인원을 정확히 올려야 하고 8명을 넘을 수 없어요.
+// - 누구나 예약(bookings)을 만들 수 있지만, 같은 요청에서 그 타임 인원을 정확히 올려야 하고 4명을 넘을 수 없어요.
 // - 예약자 이름과 번호는 아래 관리자 이메일로 구글 로그인한 사람만 읽고 취소할 수 있어요.
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -18,13 +18,16 @@ service cloud.firestore {
     }
 
     function validSlot(s) {
-      return s in ['1300','1310','1320','1330','1340','1350','1400','1410',
-                   '1450','1500','1510','1520','1530','1540','1550','1600',
-                   '1640','1650','1700','1710','1720','1730','1740','1750'];
+      return s in ['1305','1310','1315','1320','1330','1335','1340','1345',
+                   '1350','1400','1405','1410','1415','1450','1455','1500',
+                   '1505','1510','1520','1525','1530','1535','1540','1550',
+                   '1555','1605','1640','1645','1650','1655','1700','1710',
+                   '1715','1720','1725','1730','1740','1745','1750','1755',
+                   '1800'];
     }
     // 예약 오픈 시각(서버 시간 기준): 1·2부 2026-10-23 12:30 KST, 3부 16:30 KST
     function isOpen(s) {
-      return request.time >= (s in ['1640','1650','1700','1710','1720','1730','1740','1750']
+      return request.time >= (s in ['1640','1645','1650','1655','1700','1710','1715','1720','1725','1730','1740','1745','1750','1755','1800']
         ? timestamp.value(1792740600000)
         : timestamp.value(1792726200000));
     }
@@ -38,7 +41,7 @@ service cloud.firestore {
         validSlot(sid)
         && request.resource.data.keys().hasOnly(['count', 'lastBooking'])
         && request.resource.data.count is int
-        && request.resource.data.count <= 8
+        && request.resource.data.count <= 4
         && request.resource.data.lastBooking is string
         && !exists(bookingPath(request.resource.data.lastBooking))
         && existsAfter(bookingPath(request.resource.data.lastBooking))
@@ -57,7 +60,7 @@ service cloud.firestore {
         && isOpen(request.resource.data.slot)
         && request.resource.data.people is int
         && request.resource.data.people >= 1
-        && request.resource.data.people <= 8
+        && request.resource.data.people <= 4
         && request.resource.data.name is string
         && request.resource.data.name.size() >= 1
         && request.resource.data.name.size() <= 20
